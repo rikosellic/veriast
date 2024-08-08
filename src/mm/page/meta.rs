@@ -1,6 +1,4 @@
 use vstd::prelude::*;
-use vstd::cell::PCell;
-
 
 verus!
 {
@@ -20,40 +18,59 @@ pub mod mapping {
     //! The metadata of each physical page is linear mapped to fixed virtual addresses
     //! in [`FRAME_METADATA_RANGE`].
 
+    use vstd::prelude::*;
+    use crate::proofs::ast_lib::{paddr_range,meta_vaddr_range};
+    
     use core::mem::size_of;
 
     use super::{axiom_size_of_metaslot, MetaSlot};
-    use crate::mm::{kspace::FRAME_METADATA_RANGE, Paddr, Vaddr, PAGE_SIZE,ADDRESS_WIDTH};
-    use crate::mm::{paddr_range,vaddr_range};
-
-    /* 
+    use crate::mm::{kspace::{FRAME_METADATA_RANGE,FRAME_METADATA_BASE_VADDR,FRAME_METADATA_CAP_VADDR}, Paddr, Vaddr, PAGE_SIZE,ADDRESS_WIDTH};
+    
+    
     /// Converts a physical address of a base page to the virtual address of the metadata slot.
     pub const fn page_to_meta(paddr: Paddr) -> (ret:Vaddr) 
     requires paddr_range(paddr),
+    ensures meta_vaddr_range(ret),
     {
+        let base = FRAME_METADATA_RANGE.start;
+        
+        let offset = paddr / PAGE_SIZE;
+        
         proof{
             axiom_size_of_metaslot();
+            assert((size_of::<MetaSlot>() as u64) ==16);
+            assert (FRAME_METADATA_BASE_VADDR + 0xff_ffff_ffff < FRAME_METADATA_CAP_VADDR) by (compute_only);
         }
-        let base = FRAME_METADATA_RANGE.start;
-        let offset = paddr / PAGE_SIZE;
-        base + offset * size_of::<MetaSlot>() as u64 
+
+        base + offset * (size_of::<MetaSlot>() as u64) 
     }
 
+    
     /// Converts a virtual address of the metadata slot to the physical address of the page.
-    pub const fn meta_to_page(vaddr: Vaddr) -> Paddr {
+    pub const fn meta_to_page(vaddr: Vaddr) -> (ret:Paddr) 
+    requires meta_vaddr_range(vaddr),
+    ensures paddr_range(ret),
+    {
+        let base = FRAME_METADATA_RANGE.start;
+        
         proof{
             axiom_size_of_metaslot();
+            assert((size_of::<MetaSlot>() as u64) ==16);
+            assert(0<=FRAME_METADATA_CAP_VADDR -1- FRAME_METADATA_BASE_VADDR<=0xff_ffff_ffff) by (compute_only);
         }
 
-        let base = FRAME_METADATA_RANGE.start;
-        let offset = (vaddr - base) / size_of::<MetaSlot>() as u64;
+        let offset = (vaddr - base) / (size_of::<MetaSlot>() as u64);
+
         offset * PAGE_SIZE
     }
-    */
+    
+    
 }
 
 }
 
+
+use vstd::cell::PCell;
 
 use super::Page;
 use crate::mm::{page_table::PageTableEntryTrait,PagingLevel};
