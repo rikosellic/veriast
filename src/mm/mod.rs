@@ -27,7 +27,6 @@ verus!{
 
     /// The smallest page size.
     /// This is also the page size at level 1 page tables.
-    //#[verifier::external_body]
     pub const BASE_PAGE_SIZE: u64 = 4096;//unimplemented!();
 
     /// The number of levels in the page table.
@@ -35,12 +34,10 @@ verus!{
     /// the level 1 to 5 on AMD64 corresponds to Page Tables, Page Directory Tables,
     /// Page Directory Pointer Tables, Page-Map Level-4 Table, and Page-Map Level-5
     /// Table, respectively.
-    //#[verifier::external_body]
     pub const NR_LEVELS: PagingLevel = 4;//unimplemented!();
 
     /// The highest level that a PTE can be directly used to translate a VA.
     /// This affects the the largest page size supported by the page table.
-    //#[verifier::external_body]
     pub const HIGHEST_TRANSLATION_LEVEL: PagingLevel = 2;//unimplemented!();
 
     pub const PAGE_SIZE: u64 = 4096;
