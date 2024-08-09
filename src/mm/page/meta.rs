@@ -90,6 +90,7 @@ pub struct PageTablePageMeta<E: PageTableEntryTrait>
 }
 
 #[repr(u8)]
+#[derive(Copy,Clone)]
 pub enum PageUsage {
     // The zero variant is reserved for the unused type. Only an unused page
     // can be designated for one of the other purposes.
@@ -132,10 +133,10 @@ pub /*(in crate::mm)*/ struct MetaSlot {
     ///    to a `*const PageMeta` for manipulation;
     ///  - the subsequent fields can utilize the end padding of the
     ///    the inner union to save space.
-    _inner: MetaSlotInner,
+    pub _inner: MetaSlotInner,
     /// To store [`PageUsage`].
-    pub(super) usage: AtomicU8,
-    pub(super) ref_count: AtomicU32,
+    pub /* (super) */ usage: AtomicU8,
+    pub /* (super) */ ref_count: AtomicU32,
 }
 
 /// All page metadata types must implemented this sealed trait,
@@ -149,7 +150,7 @@ pub /*(in crate::mm)*/ struct MetaSlot {
 /// this page, the `on_drop` method will be called.
 pub trait PageMeta: Sync + Sized {
     //const USAGE: PageUsage;
-    fn usage() -> PageUsage;
+    spec fn usage() -> PageUsage;
 
     fn on_drop(page: &mut Page<Self>);
 }

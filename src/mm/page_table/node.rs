@@ -16,8 +16,7 @@ verus!{
 impl<E:PageTableEntryTrait> PageMeta for PageTablePageMeta<E>
 {
     //const USAGE: PageUsage = PageUsage::PageTable;
-    fn usage() -> (ret:PageUsage) 
-    ensures ret is PageTable,
+    open spec fn usage() -> (ret:PageUsage) 
     {
         PageUsage::PageTable
     }

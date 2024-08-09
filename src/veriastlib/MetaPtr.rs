@@ -1,7 +1,7 @@
 use vstd::prelude::*;
 
 use std::marker::PhantomData;
-use crate::mm::page::meta::{MetaSlot,PageMeta};
+use crate::mm::reexport::*;
 use crate::proofs::basic::{paddr_range,meta_vaddr_range};
 use crate::veriastlib::wellformed::WellFormed;
 
@@ -10,18 +10,30 @@ use crate::veriastlib::wellformed::WellFormed;
 
 
 verus!{
-    pub struct MetaPtr<M:PageMeta> {
+    pub struct MetaPtr {
         pub uptr: u64,
-        pub phantom: PhantomData<M>,
+        pub ghost current_usage: Option<PageUsage>,
     }
 
-    impl<M:PageMeta> WellFormed for MetaPtr<M> {
+    impl WellFormed for MetaPtr {
         open spec fn wf(&self) -> bool {
             meta_vaddr_range(self.uptr)
         }
     }
 
-    impl<M:PageMeta> MetaPtr<M>{
+    impl core::marker::Copy for MetaPtr {}
+
+    impl core::clone::Clone for MetaPtr {
+        #[verifier(external_body)]
+        fn clone(&self) -> (ret: Self)
+            ensures
+                *self === ret,
+        {
+            MetaPtr { uptr: self.uptr, current_usage: self.current_usage }
+        }
+    }
+
+    impl MetaPtr{
         pub open spec fn id(&self) -> nat {
             self.uptr as nat
         }
@@ -34,7 +46,7 @@ verus!{
             ensures
                 p.uptr === u,
         {
-            MetaPtr { uptr: u, phantom: PhantomData }
+            MetaPtr { uptr: u, current_usage: None }
         }
 
         #[inline(always)]
@@ -50,7 +62,7 @@ verus!{
     #[verifier(external_body)]
     #[verifier::reject_recursive_types_in_ground_variants(M)]
     pub tracked struct MetaPointsTo<M:PageMeta> {
-        pub phantom: PhantomData<M>,
+        phantom: PhantomData<M>,
         no_copy: NoCopy,
     }
 
@@ -78,10 +90,5 @@ verus!{
             self.value
         }
     }
-
-    /*impl<M:PageMeta> WellFormed for MetaPointsToData<M> {
-        open spec fn wf(&self) -> bool {
-            self.ptr.wf();
-        }
-    } */
+    
 }

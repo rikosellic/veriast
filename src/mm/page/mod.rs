@@ -10,7 +10,7 @@ use super::{PagingLevel, PAGE_SIZE};
 
 verus!{
     pub struct Page<M: PageMeta> {
-        pub(super) ptr:  MetaPtr<M>, //*const MetaSlot,
+        pub(super) ptr:  MetaPtr, //*const MetaSlot,
         pub(super) _marker: PhantomData<M>,
     }
 

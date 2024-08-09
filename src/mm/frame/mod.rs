@@ -9,8 +9,7 @@ use super::page::
 verus!{
 impl PageMeta for FrameMeta {
     //const USAGE: PageUsage = PageUsage::Frame;
-    fn usage() -> (ret:PageUsage) 
-    ensures ret is Frame,
+    open spec fn usage() -> (ret:PageUsage) 
     {
         PageUsage::Frame
     }
