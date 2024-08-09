@@ -149,7 +149,7 @@ pub /*(in crate::mm)*/ struct MetaSlot {
 /// this page, the `on_drop` method will be called.
 pub trait PageMeta: Sync + Sized {
     //const USAGE: PageUsage;
-    spec fn usage() -> PageUsage;
+    fn usage() -> PageUsage;
 
     fn on_drop(page: &mut Page<Self>);
 }

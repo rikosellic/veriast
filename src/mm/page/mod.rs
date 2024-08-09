@@ -1,5 +1,6 @@
 use vstd::prelude::*;
 use vstd::ptr::{PPtr,PointsTo};
+use crate::veriastlib::metaptr::MetaPtr;
 
 pub mod meta;
 use meta::{FrameMeta, MetaSlot, PageMeta, PageUsage};
@@ -9,7 +10,7 @@ use super::{PagingLevel, PAGE_SIZE};
 
 verus!{
     pub struct Page<M: PageMeta> {
-        pub(super) ptr:  PPtr<MetaSlot>, //*const MetaSlot,
+        pub(super) ptr:  MetaPtr<M>, //*const MetaSlot,
         pub(super) _marker: PhantomData<M>,
     }
 

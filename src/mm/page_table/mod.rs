@@ -5,6 +5,8 @@ use crate::{
     arch::mm::PageTableEntry,
 };
 
+mod node;
+use node::*;
 
 verus!{
     /// The interface for defining architecture-specific page table entries.

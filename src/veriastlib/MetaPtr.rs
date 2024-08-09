@@ -5,6 +5,10 @@ use crate::mm::page::meta::{MetaSlot,PageMeta};
 use crate::proofs::basic::{paddr_range,meta_vaddr_range};
 use crate::veriastlib::wellformed::WellFormed;
 
+// A safe verus api developed to replace the *const MetaSlot in the Page definition for verification.
+// We choose to define MetaPtr instead of using PPtr for customized control.
+
+
 verus!{
     pub struct MetaPtr<M:PageMeta> {
         pub uptr: u64,

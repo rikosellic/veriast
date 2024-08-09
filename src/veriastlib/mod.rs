@@ -1,3 +1,2 @@
 pub mod wellformed;
-
-pub mod MetaPtr;
+pub mod metaptr;

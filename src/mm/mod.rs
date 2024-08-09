@@ -10,6 +10,7 @@ pub type Paddr = u64;
 
 pub(crate)  mod reexport;
 pub(crate)  mod kspace;
+pub mod frame;
 pub(crate)  mod page;
 pub(crate)  mod page_table;
 
