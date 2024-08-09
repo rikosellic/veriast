@@ -1,5 +1,5 @@
 use vstd::prelude::*;
-use vstd::ptr::PPtr;
+use vstd::ptr::{PPtr,PointsTo};
 
 pub mod meta;
 use meta::{FrameMeta, MetaSlot, PageMeta, PageUsage};
@@ -37,7 +37,20 @@ verus!{
         {
             PAGE_SIZE
         }
+        
+        /* 
+        /// Get the metadata of this page.
+        pub fn meta<'a>(&self, perm:Tracked<&'a PointsTo<M>>) -> &'a M 
+        requires 
+            self.ptr.id() == perm.pptr,
 
+        {
+            //unsafe { &*(self.ptr as *const M) }
+            let casted_ptr: PPtr<M> = PPtr::from_usize(self.ptr.to_usize());
+            casted_ptr.borrow(perm)
+            
+        }
+            */
       
     }
 }

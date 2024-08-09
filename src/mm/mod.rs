@@ -1,5 +1,4 @@
 use vstd::prelude::*;
-use vstd::arithmetic::power2::{pow2,self};
 use std::marker::Copy;
 
 /// Virtual addresses.
@@ -9,6 +8,7 @@ pub type Vaddr = u64;
 pub type Paddr = u64;
 
 
+pub(crate)  mod reexport;
 pub(crate)  mod kspace;
 pub(crate)  mod page;
 pub(crate)  mod page_table;
@@ -48,17 +48,6 @@ verus!{
     /// The address width may be BASE_PAGE_SIZE.ilog2() + NR_LEVELS * IN_FRAME_INDEX_BITS.
     /// If it is shorter than that, the higher bits in the highest level are ignored.
     pub const ADDRESS_WIDTH: u64 = 48;//unimplemented!();
-
-
-    pub proof fn lemma_base_page_size_is_power_of_2()
-    ensures exists|i:nat| #[trigger] pow2(i)==BASE_PAGE_SIZE,
-    {
-        power2::lemma2_to64();
-    }
-
-    pub proof fn lemma_highest_translation_level_is_less_than_nr_levels()
-    ensures HIGHEST_TRANSLATION_LEVEL <= NR_LEVELS,
-    {}
 
     /// The number of sub pages in a huge page.
     pub(crate) const fn nr_subpage_per_huge() -> (ret:u64) 

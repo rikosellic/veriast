@@ -53,6 +53,6 @@ verus!
     pub const ADDR_WIDTH_SHIFT: i64 = ADDRESS_WIDTH as i64 - 48;
     pub const FRAME_METADATA_CAP_VADDR: Vaddr = 0xffff_ff00_0000_0000 << ADDR_WIDTH_SHIFT;
     pub const FRAME_METADATA_BASE_VADDR: Vaddr = 0xffff_fe00_0000_0000 << ADDR_WIDTH_SHIFT;
-    pub(in crate::mm) const FRAME_METADATA_RANGE: Range<Vaddr> =
+    pub /*(in crate::mm)*/ const FRAME_METADATA_RANGE: Range<Vaddr> =
         FRAME_METADATA_BASE_VADDR..FRAME_METADATA_CAP_VADDR;
 }

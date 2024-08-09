@@ -19,11 +19,11 @@ pub mod mapping {
     //! in [`FRAME_METADATA_RANGE`].
 
     use vstd::prelude::*;
-    use crate::proofs::ast_lib::{paddr_range,meta_vaddr_range};
+    use crate::proofs::basic::{paddr_range,meta_vaddr_range,axiom_size_of_metaslot};
     
     use core::mem::size_of;
 
-    use super::{axiom_size_of_metaslot, MetaSlot};
+    use super::MetaSlot;
     use crate::mm::{kspace::{FRAME_METADATA_RANGE,FRAME_METADATA_BASE_VADDR,FRAME_METADATA_CAP_VADDR}, Paddr, Vaddr, PAGE_SIZE,ADDRESS_WIDTH};
     
     
@@ -119,12 +119,12 @@ pub struct FrameMeta {
     _unused_for_layout_padding: [u8; 8],
 }
 
-pub(super) union MetaSlotInner {
+pub /*(super)*/ union MetaSlotInner {
     _frame: ManuallyDrop<FrameMeta>,
     _pt: ManuallyDrop<PageTablePageMeta<PageTableEntry>>,
 }
 
-pub(in crate::mm) struct MetaSlot {
+pub /*(in crate::mm)*/ struct MetaSlot {
     /// The metadata of the page.
     ///
     /// It is placed at the beginning of a slot because:
@@ -149,15 +149,10 @@ pub(in crate::mm) struct MetaSlot {
 /// this page, the `on_drop` method will be called.
 pub trait PageMeta: Sync + Sized {
     //const USAGE: PageUsage;
+    spec fn usage() -> PageUsage;
 
     fn on_drop(page: &mut Page<Self>);
 }
-
-
-#[verifier::external_body]
-pub proof fn axiom_size_of_metaslot()
-ensures core::mem::size_of::<MetaSlot>() == 16,
-{}
 }
 
 
